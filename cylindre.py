@@ -13,12 +13,17 @@ def main() -> None:
     args = parse_args()
     volume = caluler_volume(args.rayon, args.hauteur)
 
-    if args.silence:
+    if args.précision is not None:
+        volume = round(volume, args.précision)
+
+    if args.quiet:
         print(volume)
     elif args.verbeux:
-        print(f"Le volume du cylindre qui a un rayon de {args.rayon} et une hauteur de {args.hauteur} est de {volume}")
+        print(f"Le volume du cylindre de hauteur {args.hauteur} et un rayon de {args.rayon} selon XG: {volume}")
     else:
-        print(f"Le volume est de {volume}")
+        print(f"Le volume du cylindre selon XG: {volume}")
+
+    print()
 
 
 def caluler_volume(rayon: float, hauteur: float) -> float:
@@ -28,16 +33,31 @@ def caluler_volume(rayon: float, hauteur: float) -> float:
 
 def parse_args() -> argparse.Namespace:
     """Fonction qui parse les arguments"""
-    parser = argparse.ArgumentParser(description="Claculer le volume d'un cylindre")
-    parser.add_argument('--r R', '--rayon R', type=int, metavar='', required=True, help='Le rayon du cylindre')
-    parser.add_argument('--H H', '--hauteur H', type=int, metavar='', required=True, help='La hauteur du cylindre')
+    parser = argparse.ArgumentParser(description="Calcilateur de volume pour cylindre -- ©2020, par Xavier Gagnon")
+    parser.add_argument('-r', '--rayon',
+                        type=float,
+                        metavar='R',
+                        required=True,
+                        help='Rayon du cylindre',
+                        dest='rayon')
 
-    groupprecision = parser.add_mutually_exclusive_group()
-    groupprecision.add_argument('-p P', '--précision P', action='store_true', help='Précision du calule')
+    parser.add_argument('-H', '--hauteur',
+                        type=float,
+                        metavar='H',
+                        required=True,
+                        help='Hauteur du cylindre',
+                        dest='hauteur')
+
+    parser.add_argument('-p', '--précision',
+                        type=int,
+                        metavar='P',
+                        required=False,
+                        help='Précision du calule',
+                        dest='précision')
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-s', '--silence', action='store_true', help='écriture scilencieuse')
-    group.add_argument('-v', '--verbeux', action='store_true', help='écriture détaillé')
+    group.add_argument('-q', '--quiet', action='store_true', help='Afficher seulement le volume')
+    group.add_argument('-v', '--verbeux', action='store_true', help="Afficher seulement le maximum d'info")
 
     return parser.parse_args()
 
